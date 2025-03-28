@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REMS - Home</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>REMS</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="help.html">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Find Your Dream Property</h2>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="search-bar" list="location-suggestions" placeholder="Enter location">
+                    <datalist id="location-suggestions">
+                        <option value="Bangalore">
+                        <option value="Mumbai">
+                        <option value="Delhi">
+                        <option value="Chennai">
+                        <option value="Hyderabad">
+                        <option value="Pune">
+                    </datalist>
+                    <button onclick="searchProperties()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="filters">
+                    <select id="type-filter">
+                        <option value="">All Types</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="House">House</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Studio">Studio</option>
+                        <option value="Penthouse">Penthouse</option>
+                        <option value="Duplex">Duplex</option>
+                        <option value="Bungalow">Bungalow</option>
+                        <option value="Farmhouse">Farmhouse</option>
+                        <option value="Commercial">Commercial</option>
+                    </select>
+                    <input type="number" id="budget-filter" placeholder="Max Budget (INR)">
+                </div>
+            </div>
+        </section>
+
+        <section class="properties">
+            <h3>Available Properties</h3>
+            <div class="property-grid">
+                <div class="property-card">
+                    <img src="images/apartment-bangalore.jpg" alt="Apartment" onerror="this.onerror=null; this.src='images/placeholder.jpg'; this.parentElement.innerHTML='<div class=\'image-error\'><i class=\'fas fa-image\'></i><p>Image not available</p></div>';">
+                    <div class="property-info">
+                        <h4>Apartment in Bangalore</h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Bangalore, Karnataka</p>
+                        <p class="price">₹50,000</p>
+                        <div class="property-details">
+                            <span><i class="fas fa-bed"></i> 2 Beds</span>
+                            <span><i class="fas fa-bath"></i> 2 Baths</span>
+                            <span><i class="fas fa-ruler-combined"></i> 1,200 sqft</span>
+                        </div>
+                        <button onclick="viewDetails(1)" class="view-details-btn">View Details</button>
+                    </div>
+                </div>
+                <div class="property-card">
+                    <img src="images/house-mumbai.jpg" alt="House" onerror="this.onerror=null; this.src='images/placeholder.jpg'; this.parentElement.innerHTML='<div class=\'image-error\'><i class=\'fas fa-image\'></i><p>Image not available</p></div>';">
+                    <div class="property-info">
+                        <h4>House in Mumbai</h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Mumbai, Maharashtra</p>
+                        <p class="price">₹80,000</p>
+                        <div class="property-details">
+                            <span><i class="fas fa-bed"></i> 3 Beds</span>
+                            <span><i class="fas fa-bath"></i> 2 Baths</span>
+                            <span><i class="fas fa-ruler-combined"></i> 2,000 sqft</span>
+                        </div>
+                        <button onclick="viewDetails(2)" class="view-details-btn">View Details</button>
+                    </div>
+                </div>
+                <div class="property-card">
+                    <img src="non-existent-penthouse-image.jpg" alt="Penthouse" onerror="this.onerror=null; this.src='images/placeholder.jpg'; this.parentElement.innerHTML='<div class=\'image-error\'><i class=\'fas fa-image\'></i><p>Image not available</p></div>';">
+                    <div class="property-info">
+                        <h4>Penthouse in Kolkata</h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Kolkata, West Bengal</p>
+                        <p class="price">₹1,20,000</p>
+                        <div class="property-details">
+                            <span><i class="fas fa-bed"></i> 4 Beds</span>
+                            <span><i class="fas fa-bath"></i> 3 Baths</span>
+                            <span><i class="fas fa-ruler-combined"></i> 3,500 sqft</span>
+                        </div>
+                        <button onclick="viewDetails(3)" class="view-details-btn">View Details</button>
+                    </div>
+                </div>
+                <div class="property-card">
+                    <img src="non-existent-farmhouse-image.jpg" alt="Farmhouse" onerror="this.onerror=null; this.src='images/placeholder.jpg'; this.parentElement.innerHTML='<div class=\'image-error\'><i class=\'fas fa-image\'></i><p>Image not available</p></div>';">
+                    <div class="property-info">
+                        <h4>Farmhouse in Jaipur</h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Jaipur, Rajasthan</p>
+                        <p class="price">₹2,50,000</p>
+                        <div class="property-details">
+                            <span><i class="fas fa-bed"></i> 5 Beds</span>
+                            <span><i class="fas fa-bath"></i> 4 Baths</span>
+                            <span><i class="fas fa-ruler-combined"></i> 5,000 sqft</span>
+                        </div>
+                        <button onclick="viewDetails(4)" class="view-details-btn">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About REMS</h4>
+                <p>Your trusted partner in real estate management</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: support@rems.com</p>
+                <p>Phone: (555) 123-4567</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 REMS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
