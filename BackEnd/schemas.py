@@ -20,6 +20,7 @@ class PropertyBase(BaseModel):
     Status: str
     Features: Optional[str] = None
     Rating: Optional[float] = None
+    ImageURL: Optional[str] = None
 
 class PropertyCreate(PropertyBase):
     LocationID: int

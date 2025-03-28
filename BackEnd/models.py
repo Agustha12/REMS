@@ -31,6 +31,7 @@ class Property(Base):
     Status = Column(String(10), nullable=False)
     Features = Column(Text)
     Rating = Column(Float)
+    ImageURL = Column(String(255))
     location = relationship("Location", back_populates="properties")
 
 class Enquiry(Base):

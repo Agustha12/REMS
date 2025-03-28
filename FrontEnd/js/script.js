@@ -1,174 +1,174 @@
 // js/script.js
 
-// Sample properties data
-const properties = [
-    {
-        id: 1,
-        title: "Apartment in Bangalore",
-        location: "Bangalore, Karnataka",
-        type: "Apartment",
-        price: "₹50,000",
-        beds: 2,
-        baths: 2,
-        area: "1,200",
-        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"
-    },
-    {
-        id: 2,
-        title: "House in Mumbai",
-        location: "Mumbai, Maharashtra",
-        type: "House",
-        price: "₹80,000",
-        beds: 3,
-        baths: 2,
-        area: "2,000",
-        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"
-    },
-    {
-        id: 3,
-        title: "Apartment in Delhi",
-        location: "Delhi, NCR",
-        type: "Apartment",
-        price: "₹45,000",
-        beds: 2,
-        baths: 1,
-        area: "1,000",
-        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"
-    },
-    {
-        id: 4,
-        title: "Villa in Hyderabad",
-        location: "Hyderabad, Telangana",
-        type: "Villa",
-        price: "₹1,20,000",
-        beds: 4,
-        baths: 3,
-        area: "3,500",
-        image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811"
-    },
-    {
-        id: 5,
-        title: "Studio Apartment in Chennai",
-        location: "Chennai, Tamil Nadu",
-        type: "Apartment",
-        price: "₹35,000",
-        beds: 1,
-        baths: 1,
-        area: "800",
-        image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"
-    },
-    {
-        id: 6,
-        title: "Penthouse in Kolkata",
-        location: "Kolkata, West Bengal",
-        type: "Penthouse",
-        price: "₹1,50,000",
-        beds: 3,
-        baths: 2,
-        area: "2,500",
-        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c"
-    },
-    {
-        id: 7,
-        title: "Duplex in Pune",
-        location: "Pune, Maharashtra",
-        type: "Duplex",
-        price: "₹95,000",
-        beds: 3,
-        baths: 2,
-        area: "2,200",
-        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-    },
-    {
-        id: 8,
-        title: "Farmhouse in Jaipur",
-        location: "Jaipur, Rajasthan",
-        type: "Farmhouse",
-        price: "₹2,00,000",
-        beds: 5,
-        baths: 3,
-        area: "5,000",
-        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-    },
-    {
-        id: 9,
-        title: "Luxury Apartment in Ahmedabad",
-        location: "Ahmedabad, Gujarat",
-        type: "Apartment",
-        price: "₹65,000",
-        beds: 2,
-        baths: 2,
-        area: "1,500",
-        image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"
-    }
-];
+// Backend API URL
+const API_URL = 'http://127.0.0.1:8000';
 
-// Function to create property card HTML with error handling for images
+// Function to display properties in the grid
+function displayProperties(properties) {
+    const propertyGrid = document.querySelector('.property-grid');
+    if (!propertyGrid) {
+        console.warn('Property grid element not found');
+        return;
+    }
+
+    if (!Array.isArray(properties)) {
+        console.error('displayProperties received non-array:', properties);
+        propertyGrid.innerHTML = '<p>Error: Invalid property data</p>';
+        return;
+    }
+
+    if (properties.length === 0) {
+        propertyGrid.innerHTML = '<p>No properties found!</p>';
+        return;
+    }
+
+    try {
+        propertyGrid.innerHTML = properties.map(property => createPropertyCard(property)).join('');
+        console.log(`Displayed ${properties.length} properties`);
+    } catch (error) {
+        console.error('Error displaying properties:', error);
+        propertyGrid.innerHTML = '<p>Error displaying properties</p>';
+    }
+}
+
+// Function to fetch properties from the backend
+async function fetchProperties(location = '', type = '', budget = '') {
+    try {
+        const queryParams = new URLSearchParams();
+        if (location) queryParams.append('location', location);
+        if (type) queryParams.append('type', type);
+        if (budget) queryParams.append('max_budget', budget);
+
+        console.log('Fetching properties with:', queryParams.toString());
+
+        const response = await fetch(`${API_URL}/properties/search?${queryParams.toString()}`);
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+            console.error('Response not OK:', response.status, response.statusText);
+            throw new Error(`Failed to fetch properties: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('Received data:', data);
+        
+        // Validate the response data
+        if (!data) {
+            console.error('Received null or undefined data');
+            throw new Error('No data received from server');
+        }
+
+        if (!Array.isArray(data)) {
+            console.error('Expected array of properties, got:', typeof data);
+            throw new Error('Unexpected API response format');
+        }
+
+        // Validate each property object
+        const validProperties = data.filter(property => {
+            if (!property || typeof property !== 'object') {
+                console.warn('Invalid property object:', property);
+                return false;
+            }
+            return true;
+        });
+
+        console.log(`Found ${validProperties.length} valid properties`);
+        
+        if (validProperties.length === 0) {
+            console.log('No valid properties found');
+            displayProperties([]);
+            return [];
+        }
+
+        displayProperties(validProperties);
+        return validProperties;
+    } catch (error) {
+        console.error('Error fetching properties:', error);
+        displayProperties([]);
+        return [];
+    }
+}
+
+// Function to create property card HTML
 function createPropertyCard(property) {
+    console.log('Creating card for property:', property);
+    console.log('Image URL:', property.ImageURL);
+    
+    // Validate property data
+    if (!property || !property.Type || !property.location || !property.Cost) {
+        console.error('Invalid property data:', property);
+        return '';
+    }
+
+    // Generate a placeholder image based on property type
+    const getPlaceholderImage = (type) => {
+        const baseUrl = 'https://via.placeholder.com/800x600';
+        const text = encodeURIComponent(`${type || 'Property'} Image`);
+        const color = 'f0f0f0';
+        return `${baseUrl}/${color}/666666?text=${text}`;
+    };
+
+    // Get image URL or use placeholder
+    const imageUrl = property.ImageURL === null || property.ImageURL === undefined ? 
+        getPlaceholderImage(property.Type) : 
+        `${API_URL}/images/${property.ImageURL}`;
+    console.log('Final image URL:', imageUrl);
+
+    // Create card HTML
     return `
         <div class="property-card">
-            <img src="${property.image}" alt="${property.type}" 
-                 onerror="this.onerror=null; this.src='images/placeholder.jpg'; this.parentElement.innerHTML='<div class=\\'image-error\\'><i class=\\'fas fa-image\\'></i><p>Image not available</p></div>';">
+            <div class="property-image-container">
+                <img src="${imageUrl}" 
+                     alt="${property.Type || 'Property'}" 
+                     class="property-image"
+                     onerror="console.error('Failed to load image:', this.src); this.onerror=null; this.src='https://via.placeholder.com/800x600/f0f0f0/666666?text=Image+Not+Found';">
+                ${property.Status ? `<span class="property-status ${property.Status.toLowerCase()}">${property.Status}</span>` : ''}
+            </div>
             <div class="property-info">
-                <h4>${property.title}</h4>
-                <p class="location"><i class="fas fa-map-marker-alt"></i> ${property.location}</p>
-                <p class="price">${property.price}</p>
+                <h4>${property.Type || 'Property'} in ${property.location?.TownCity || 'Unknown Location'}</h4>
+                <p class="location"><i class="fas fa-map-marker-alt"></i> ${property.location?.TownCity || 'Unknown'}, ${property.location?.State || 'Unknown'}</p>
+                <p class="price">₹${(property.Cost || 0).toLocaleString()}</p>
                 <div class="property-details">
-                    <span><i class="fas fa-bed"></i> ${property.beds} Beds</span>
-                    <span><i class="fas fa-bath"></i> ${property.baths} Baths</span>
-                    <span><i class="fas fa-ruler-combined"></i> ${property.area} sqft</span>
+                    <span><i class="fas fa-ruler-combined"></i> ${property.Size || 0} sqft</span>
+                    ${property.Rating ? `<span><i class="fas fa-star"></i> ${property.Rating}</span>` : ''}
+                    ${property.Features ? `<span><i class="fas fa-info-circle"></i> ${property.Features}</span>` : ''}
                 </div>
-                <button onclick="viewDetails(${property.id})" class="view-details-btn">View Details</button>
+                <button onclick="viewDetails(${property.PropertyID})" class="view-details-btn">View Details</button>
             </div>
         </div>
     `;
 }
 
 // Function to search and filter properties
-function searchProperties() {
+async function searchProperties() {
     const searchTerm = document.getElementById('search-bar').value.toLowerCase();
     const typeFilter = document.getElementById('type-filter').value;
     const budgetFilter = document.getElementById('budget-filter').value;
 
-    const filteredProperties = properties.filter(property => {
-        const matchesLocation = property.location.toLowerCase().includes(searchTerm);
-        const matchesType = !typeFilter || property.type === typeFilter;
-        const matchesBudget = !budgetFilter || 
-            parseFloat(property.price.replace(/[^0-9.]/g, '')) <= parseFloat(budgetFilter);
-
-        return matchesLocation && matchesType && matchesBudget;
-    });
-
-    const propertyGrid = document.querySelector('.property-grid');
-    if (propertyGrid) {
-        if (filteredProperties.length === 0) {
-            propertyGrid.innerHTML = '<p>No properties found matching your criteria.</p>';
-        } else {
-            propertyGrid.innerHTML = filteredProperties.map(property => createPropertyCard(property)).join('');
-        }
-    } else {
-        console.warn('Property grid element not found on this page.');
-    }
+    await fetchProperties(searchTerm, typeFilter, budgetFilter);
 }
 
 // Function to view property details
-function viewDetails(id) {
-    const property = properties.find(p => p.id === id);
-    if (property) {
+async function viewDetails(id) {
+    try {
+        const response = await fetch(`${API_URL}/properties/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch property details');
+        const property = await response.json();
+        
         alert(`
             Property Details:
-            ${property.title}
-            Location: ${property.location}
-            Price: ${property.price}
-            Type: ${property.type}
-            Beds: ${property.beds}
-            Baths: ${property.baths}
-            Area: ${property.area} sqft
+            ${property.Type} in ${property.location?.TownCity || 'Unknown Location'}
+            Location: ${property.location?.TownCity || 'Unknown'}, ${property.location?.State || 'Unknown'}
+            Price: ₹${(property.Cost || 0).toLocaleString()}
+            Type: ${property.Type}
+            Size: ${property.Size || 0} sqft
+            Features: ${property.Features || 'N/A'}
+            Rating: ${property.Rating || 'N/A'}
+            Status: ${property.Status || 'N/A'}
         `);
-        // In a real app, redirect to a details page:
-        // window.location.href = `property-details.html?id=${id}`;
-    } else {
-        alert('Property not found.');
+    } catch (error) {
+        console.error('Error fetching property details:', error);
+        alert('Failed to load property details. Please try again later.');
     }
 }
 
@@ -239,11 +239,42 @@ function handleSupportSubmit(event) {
     return false;
 }
 
+// Function to test API connection and CORS
+async function testAPIConnection() {
+    try {
+        console.log('Testing API connection...');
+        const response = await fetch(`${API_URL}/test-cors`);
+        console.log('Test response status:', response.status);
+        
+        if (!response.ok) {
+            console.error('API test failed:', response.status, response.statusText);
+            return false;
+        }
+        
+        const data = await response.json();
+        console.log('API test response:', data);
+        return true;
+    } catch (error) {
+        console.error('API test error:', error);
+        return false;
+    }
+}
+
 // Add event listeners when the document is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Test API connection first
+    const isConnected = await testAPIConnection();
+    if (!isConnected) {
+        console.error('Failed to connect to API. Please check if the backend server is running.');
+        return;
+    }
+
     // Initial render of all properties on the Home page
     const propertyGrid = document.querySelector('.property-grid');
     if (propertyGrid) {
+        console.log('Found property grid, fetching properties...');
+        const properties = await fetchProperties();
+        console.log(`Rendering ${properties.length} properties`);
         propertyGrid.innerHTML = properties.map(property => createPropertyCard(property)).join('');
     } else {
         console.warn('Property grid element not found on this page.');
